@@ -60,36 +60,6 @@ class ExternalListingsService:
       
         self.building_types = {1: "Room", 2: "Apartment", 3: "House"}
 
-        self.building_type_mapping = {
-            BuildingType.BLOCK: 2,            # "BLOCK" -> "Apartment"
-            BuildingType.APARTMENT_BUILDING: 2,
-            BuildingType.TENEMENT: 3,
-            BuildingType.HOUSE: 3,
-            BuildingType.INFILL: 2,
-            BuildingType.RIBBON: 2,
-            BuildingType.LOFT: 2,
-            BuildingType.WOLNOSTOJACY: 3,
-            BuildingType.OTHER: 2,            # fallback
-        }
-
-        self.reverse_building_type_mapping = {
-            1: [ # room
-                BuildingType.OTHER
-            ],
-            2: [ # apartment
-                BuildingType.BLOCK,
-                BuildingType.APARTMENT_BUILDING,
-                BuildingType.INFILL,
-                BuildingType.RIBBON,
-                BuildingType.LOFT
-            ],
-            3: [ # house
-                BuildingType.TENEMENT,
-                BuildingType.HOUSE,
-                BuildingType.WOLNOSTOJACY
-            ]
-        }
-
         
     
 
@@ -170,12 +140,10 @@ class ExternalListingsService:
         params["offer_type"] = "RENT"
 
         if filter_model.Types:
-            params["building_type"] = [
-                bt.value
-                for t in filter_model.Types
-                if t in self.reverse_building_type_mapping
-                for bt in self.reverse_building_type_mapping[t]
+            params["category_type"] = [
+                self.building_types[i] for i in filter_model.Types if i in self.building_types
             ]
+
         # price
         if filter_model.Price:
             if filter_model.Price.from_ is not None:
@@ -278,7 +246,7 @@ class ExternalListingsService:
                 district=listing.get("district", "") or "",
                 title=listing.get("title", ""),
                 photos=photos,
-                rooms=listing.get("rooms", 0),
+                rooms= 1 if listing.get("category_type") == "Room" else listing.get("rooms", 0),
                 area=listing.get("area_m2"),
                 price=listing.get("price"),
                 currency=listing.get("currency_code", "zl"),
