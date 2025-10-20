@@ -176,7 +176,6 @@ class ExternalListingsService:
                 if t in self.reverse_building_type_mapping
                 for bt in self.reverse_building_type_mapping[t]
             ]
-        print(params["building_type"])
         # price
         if filter_model.Price:
             if filter_model.Price.from_ is not None:
