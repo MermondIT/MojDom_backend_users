@@ -8,7 +8,7 @@ from fastapi import Request
 from app.exceptions.custom_exceptions import UnauthorizedException
 from app.config import settings
 
-print(settings.public_token)
+
 class UserService:
     """Service for user authentication and authorization"""
     
